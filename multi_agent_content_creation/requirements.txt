@@ -1,7 +1,7 @@
 python-dotenv
 requests
-newsapi-python
 pytrends
 langchain
 langchain-community
-langchain-openai
+langchain-google-genai
+gTTS
