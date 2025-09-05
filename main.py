@@ -1,63 +1,78 @@
 """
-Example usage script for the Client Qualification & Scoping Engine (CQSE).
+Example usage script for the AI-Powered Operational Intelligence Suite.
 
-This script demonstrates the basic functionality of the lead scoring system
-by qualifying a good-fit and a poor-fit lead against a sample
-Ideal Client Profile (ICP).
+This script demonstrates the end-to-end workflow of:
+1. Qualifying a lead using the Client Qualification & Scoping Engine (CQSE).
+2. Designing a solution for the qualified lead using the Integrated Solution
+   Architect (ISA).
 """
 from src.cqse.models import IdealClientProfile, Lead
 from src.cqse.scorer import score_lead
-
+from src.isa.architect import design_solution
 
 def main():
     """Main function to run the demonstration."""
-    # 1. Define the Ideal Client Profile (ICP) for High-Value Construction
-    # Based on the blueprint document (section 1.2.1)
+    print("--- AI-Powered Operational Intelligence Suite Demo ---")
+
+    # --- Define ICP and Leads ---
     construction_icp = IdealClientProfile(
         vertical_name="High-Value Construction",
         pain_points_keywords=[
             "theft", "vandalism", "project delays",
             "budget overruns", "liability", "trespassing"
         ],
-        decision_maker_titles=["Project Manager", "Site Superintendent", "Head of Security"],
+        decision_maker_titles=["Project Manager", "Site Superintendent"],
         value_proposition_key="Project Continuity Insurance",
         strategic_narrative="Shift conversation from cost of security to cost of insecurity.",
     )
 
-    # 2. Simulate incoming leads
-    good_lead = Lead(
+    construction_lead = Lead(
         company_name="SecureBuild Construction",
         industry="Construction",
         self_reported_need="We are having major issues with equipment theft and "
-                           "trespassing at our new site, leading to costly project delays."
+                           "vandalism at our new site, leading to costly project delays."
     )
 
-    poor_lead = Lead(
+    retail_lead = Lead(
         company_name="Corner Bodega",
         industry="Retail",
         self_reported_need="I need a simple alarm system for my small shop."
     )
 
-    # 3. Score the leads against the ICP
-    good_lead_score = score_lead(good_lead, construction_icp)
-    poor_lead_score = score_lead(poor_lead, construction_icp)
+    leads_to_process = [construction_lead, retail_lead]
 
-    # 4. Print the results
-    print("--- CQSE Lead Qualification Demo ---")
-    print(f"\nScoring against ICP: '{construction_icp.vertical_name}'")
-    print("-" * 35)
+    for i, lead in enumerate(leads_to_process):
+        print(f"\n----- Processing Lead {i+1}: {lead.company_name} -----")
 
-    print(f"\nLead 1: '{good_lead.company_name}'")
-    print(f"Need: \"{good_lead.self_reported_need}\"")
-    print(f"Qualification Score: {good_lead_score}")
-    print("Assessment: Good Fit" if good_lead_score > 1 else "Assessment: Poor Fit")
+        # --- Stage 1: Client Qualification (CQSE) ---
+        print("\n[Stage 1: CQSE] Qualifying lead...")
+        score = score_lead(lead, construction_icp)
+        print(f"Qualification Score: {score}")
 
-    print("-" * 35)
+        # Define a qualification threshold
+        qualification_threshold = 2
 
-    print(f"\nLead 2: '{poor_lead.company_name}'")
-    print(f"Need: \"{poor_lead.self_reported_need}\"")
-    print(f"Qualification Score: {poor_lead_score}")
-    print("Assessment: Good Fit" if poor_lead_score > 1 else "Assessment: Poor Fit")
+        if score >= qualification_threshold:
+            print("Assessment: Lead is QUALIFIED.")
+
+            # --- Stage 2: Solution Design (ISA) ---
+            print("\n[Stage 2: ISA] Designing solution...")
+            solution = design_solution(lead)
+            print(f"Recommended Solution: '{solution.name}'")
+            print(f"Description: {solution.description}")
+            print("\nItemized Proposal:")
+            print("-" * 30)
+            for component in solution.components:
+                print(f"  - {component.service.name} (x{component.quantity})")
+                print(f"    '{component.service.description}'")
+                print(f"    Price: ${component.service.price:.2f} / {component.service.unit}")
+            print("-" * 30)
+            # A real proposal would distinguish recurring vs one-time costs
+            print(f"Estimated Total: ${solution.total_price:.2f}")
+
+        else:
+            print("Assessment: Lead is NOT QUALIFIED. Halting process.")
+
     print("\n--- End of Demo ---")
 
 
