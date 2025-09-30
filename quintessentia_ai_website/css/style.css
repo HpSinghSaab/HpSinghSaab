@@ -146,8 +146,70 @@ nav ul li a:hover {
 .hero .subtitle {
     font-size: 1.2rem;
     max-width: 700px;
-    margin: 0 auto;
+    margin: 0 auto 2rem auto;
     color: var(--secondary-color);
+}
+
+.home-section {
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.home-section h2 {
+    margin-bottom: 1rem;
+}
+
+.home-section .section-intro {
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+}
+
+.about-section-home {
+    background-color: var(--primary-color);
+    color: var(--neutral-color);
+}
+
+.about-section-home h2,
+.about-section-home .section-intro {
+    color: var(--white-color);
+}
+
+.cta-button-outline {
+    display: inline-block;
+    background-color: transparent;
+    color: var(--primary-color);
+    padding: 0.8rem 1.8rem;
+    font-family: var(--font-primary);
+    font-weight: 700;
+    border-radius: 5px;
+    border: 2px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.cta-button-outline:hover {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    transform: translateY(-2px);
+}
+
+.about-section-home .cta-button-outline {
+    color: var(--white-color);
+    border-color: var(--white-color);
+}
+
+.about-section-home .cta-button-outline:hover {
+    background-color: var(--white-color);
+    color: var(--primary-color);
+}
+
+.page-header-section {
+    padding: 6rem 0;
+    text-align: center;
+    background-color: var(--neutral-color);
+}
+
+.page-header-section h1 {
+    margin-bottom: 1rem;
 }
 
 /* --- 4. Services Section --- */
@@ -347,6 +409,22 @@ nav ul li a:hover {
     opacity: 0.9;
 }
 
+.about-details {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.about-details h3 {
+    color: var(--white-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+    margin-top: 0;
+}
+
 /* --- 7. Contact Section --- */
 .contact-section {
     background-color: var(--neutral-color);
@@ -466,15 +544,52 @@ footer {
 }
 
 /* --- 9. Animations --- */
+body.is-leaving {
+    opacity: 0;
+    transition: opacity 0.4s ease-in;
+}
+
+main {
+    opacity: 0;
+    animation: page-load-transition 0.6s ease-out forwards;
+}
+
+@keyframes page-load-transition {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .fade-in-element {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: transform, opacity;
 }
 
 .fade-in-element.visible {
-    opacity: 1;
-    transform: translateY(0);
+    animation: bubble-pop-animation 0.5s ease-out forwards;
+}
+
+@keyframes bubble-pop-animation {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 
