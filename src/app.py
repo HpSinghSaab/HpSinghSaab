@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from src.tax_engine.flow_through_calc import FlowThroughCalculator
+from src.tax_engine.capital_gains import CapitalGainsCalculator2025
 from src.geology.drill_parser import DrillParser
 
 app = Flask(__name__)
@@ -19,6 +20,21 @@ def calculate_tax():
 
         calc = FlowThroughCalculator(marginal_tax_rate=tax_rate, province=province)
         result = calc.calculate_breakeven(share_price=price, investment_amount=investment)
+
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/capgains', methods=['POST'])
+def calculate_capgains():
+    data = request.json
+    try:
+        gain = float(data.get('gain', 0.0))
+        tax_rate = float(data.get('tax_rate', 0.50))
+        entity = data.get('entity', 'Individual')
+
+        calc = CapitalGainsCalculator2025(marginal_tax_rate=tax_rate, entity_type=entity)
+        result = calc.calculate_tax(gain)
 
         return jsonify(result)
     except Exception as e:

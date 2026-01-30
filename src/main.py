@@ -1,6 +1,27 @@
 import sys
 from src.tax_engine.flow_through_calc import FlowThroughCalculator
+from src.tax_engine.capital_gains import CapitalGainsCalculator2025
 from src.geology.drill_parser import DrillParser
+
+def run_cap_gains_calc():
+    print("\n--- 2025 Capital Gains Tax Estimator ---")
+    try:
+        gain = float(input("Enter Total Capital Gain ($): ") or "0")
+        tax_rate = float(input("Enter Marginal Tax Rate (0.00-1.00): ") or "0.50")
+        entity = input("Entity Type (Individual/Corporation) [Individual]: ") or "Individual"
+
+        calc = CapitalGainsCalculator2025(marginal_tax_rate=tax_rate, entity_type=entity)
+        res = calc.calculate_tax(gain)
+
+        print("\n--- Results ---")
+        print(f"Total Gain: ${res['total_gain']:,.2f}")
+        print(f"Taxable Capital Gain: ${res['taxable_capital_gain']:,.2f}")
+        print(f"Tax Payable: ${res['tax_payable']:,.2f}")
+        print(f"Effective Tax Rate: {res['effective_tax_rate']:.2%}")
+        print(f"Details: {res['details']}")
+
+    except ValueError:
+        print("Invalid input.")
 
 def run_tax_calc():
     print("\n--- Flow-Through Share Calculator ---")
@@ -49,11 +70,13 @@ def main():
         print("\nSelect Tool:")
         print("1. Flow-Through Tax Calculator")
         print("2. Drill Result Parser")
-        print("3. Exit")
+        print("3. 2025 Capital Gains Estimator")
+        print("4. Exit")
         choice = input("Enter choice: ")
         if choice == '1': run_tax_calc()
         elif choice == '2': run_drill_parser()
-        elif choice == '3': sys.exit(0)
+        elif choice == '3': run_cap_gains_calc()
+        elif choice == '4': sys.exit(0)
 
 if __name__ == "__main__":
     main()

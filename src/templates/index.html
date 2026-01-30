@@ -47,6 +47,26 @@
     </div>
 
     <div class="card">
+        <h2>2025 Capital Gains Estimator</h2>
+        <form id="capGainsForm">
+            <label>Total Capital Gain ($)</label>
+            <input type="number" id="gainAmount" value="2000000">
+
+            <label>Marginal Tax Rate (0.00 - 1.00)</label>
+            <input type="number" id="cgTaxRate" step="0.01" value="0.53">
+
+            <label>Entity Type</label>
+            <select id="entityType">
+                <option value="Individual">Individual</option>
+                <option value="Corporation">Corporation</option>
+            </select>
+
+            <button type="submit">Calculate Tax</button>
+        </form>
+        <div id="cgResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="card">
         <h2>Drill Result Interpreter</h2>
         <p>Paste a press release snippet below.</p>
         <form id="drillForm">
@@ -80,6 +100,31 @@
                 <small>Savings: $${(result.deduction_savings + result.credit_savings).toFixed(2)}</small>
             `;
             const div = document.getElementById('taxResult');
+            div.innerHTML = html;
+            div.style.display = 'block';
+        });
+
+        document.getElementById('capGainsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                gain: document.getElementById('gainAmount').value,
+                tax_rate: document.getElementById('cgTaxRate').value,
+                entity: document.getElementById('entityType').value
+            };
+
+            const res = await fetch('/api/capgains', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+
+            const html = `
+                <strong>Tax Payable:</strong> $${result.tax_payable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}<br>
+                <strong>Effective Tax Rate:</strong> ${(result.effective_tax_rate * 100).toFixed(2)}%<br>
+                <small>${result.details}</small>
+            `;
+            const div = document.getElementById('cgResult');
             div.innerHTML = html;
             div.style.display = 'block';
         });
